@@ -99,7 +99,7 @@
     props: ['resourceConfig', 'fields', 'tableName', 'filterForm'],
     data() {
       return {
-        resource: new Resource(this.$resource(this.resourceConfig.url + '{/id}')),
+        resource: new Resource(this.resourceConfig.url + '{/id}'),
         rows: [],
         rowsBack: [],
         row: {},

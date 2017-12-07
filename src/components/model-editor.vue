@@ -62,7 +62,7 @@
     props: ['resourceConfig', 'fields', 'model', 'display'],
     data() {
       return {
-        resource: new Resource(this.$resource(this.resourceConfig.url)),
+        resource: new Resource(this.resourceConfig.url),
         row: {},
         rules: FormArray.fromArray(this.fields)
           .mapToObject((ruleMap, field) => {

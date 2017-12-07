@@ -1,20 +1,16 @@
 import swal from 'sweetalert2'
-import Vue from 'vue'
+import Axios from 'axios'
 
 function parseResult(res) {
-  if (res && res.ok) {
-    let json = JSON.parse(res.bodyText)
-    if (!json.success && json.status === 401) {
-      console.error(res)
-      getLogin()
-    }
-    if (json.msgs) {
-      json.msgs = json.msgs[Object.keys(json.msgs)[0]]
-    }
-    return json
-  } else {
+  if (!res) {
     swal('未知错误，请重试', res.statusText, 'error')
     console.error(res.status, res.statusText, res.status)
+  }
+  switch (res.status) {
+    case 200:
+      return res.data
+    case 401:
+      getLogin()
   }
 }
 
@@ -75,11 +71,11 @@ let storage = new Storage()
 
 function doGet(url, param) {
   return new Promise((resolve, reject) => {
-    Vue.http.get(url, {params: param})
+    Axios.get(url, {params: param})
       .then(resStr => {
-        let res = parseResult(resStr)
-        if (res.success) {
-          storage.set(url, param, res)
+        let data = parseResult(resStr)
+        if (data) {
+          storage.set(url, param, data)
           let cachedRes = storage.get(url, param)
           resolve(cachedRes)
         } else {
@@ -87,7 +83,7 @@ function doGet(url, param) {
           if (cachedRes.success) {
             resolve(cachedRes)
           } else {
-            reject(res)
+            reject(data)
           }
         }
       })
@@ -103,10 +99,10 @@ function doGet(url, param) {
 }
 function doPost(url, param) {
   return new Promise((resolve, reject) => {
-    Vue.http.post(url, param)
+    Axios.post(url, {params: param})
       .then(resStr => {
         let res = parseResult(resStr)
-        if (res.success) {
+        if (res) {
           resolve(res)
         } else {
           reject(res)
@@ -115,15 +111,18 @@ function doPost(url, param) {
   })
 }
 
-const Resource = function(vueResource) {
-  this.doOperation = (request, needAlert = false) => {
+class Resource {
+  constructor(url) {
+    this.url = url
+  }
+  doOperation(request) {
     return new Promise((resolve, reject) => {
       request().then(resStr => {
         let json = parseResult(resStr)
-        if (json.success) {
+        if (json) {
           resolve(json)
         } else {
-          json.status !== 401 && swal('操作失败', '信息：' + json.msgs, 'error')
+          swal('操作失败', '信息：' + json.msgs, 'error')
           reject(json)
         }
       }).catch(error => {
@@ -132,10 +131,16 @@ const Resource = function(vueResource) {
       })
     })
   }
-  this.get = params => this.doOperation(() => vueResource.get(params))
-  this.update = params => this.doOperation(() => vueResource.update(params), true)
-  this.save = params => this.doOperation(() => vueResource.save({}, params), true)
-  this.delete = (data, target = '') => {
+  get(params) {
+    return this.doOperation(() => Axios.get(this.url, {params: params}))
+  }
+  update(params) {
+    return this.doOperation(() => Axios.put(this.url, {params: params}))
+  }
+  save(params) {
+    return this.doOperation(() => Axios.post(this.url, {params: params}))
+  }
+  delete(data, target = '') {
     return swal({
       title: `确定要删除${target}吗？`,
       type: 'warning',
@@ -144,10 +149,11 @@ const Resource = function(vueResource) {
       cancelButtonText: '取消'
     }).then(() => {
       let params = typeof data === 'number' ? {id: data} : data
-      return this.doOperation(() => vueResource.delete({}, params), true)
+      return this.doOperation(() => Axios.delete(this.url, {params: params}))
     })
   }
 }
+
 function cloneWithoutEmptyValue(target) {
   if (typeof target !== 'object') return {}
   let obj = {}

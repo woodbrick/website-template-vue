@@ -27,7 +27,7 @@
             </el-menu-item>
           </template>
           <template v-else>
-            <el-submenu :index="route.path">
+            <el-submenu :index="route.path" :key="route.path">
               <template slot="title">{{route.name}}</template>
               <el-menu-item v-for="subRoute in route.children"
                             :index="subRoute.path"

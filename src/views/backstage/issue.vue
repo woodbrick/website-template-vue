@@ -1,6 +1,6 @@
 <template>
   <div class="base-page">
-    <paged-table :resourceConfig="quotaConfig" :fields="fields"></paged-table>
+    <paged-table :resourceConfig="resourceConfig" :fields="fields"></paged-table>
   </div>
 </template>
 <script>
@@ -16,49 +16,53 @@
     },
     data() {
       return {
-        quotaConfig: {
-          url: '/nova/manage/quota',
-          resKey: 'rows',
-          params: {legendId: 108, limit: 1000},
-          submitParams: {legendId: 108}
+        resourceConfig: {
+          url: '/data/issue',
+          params: {limit: 1000},
+          submitParams: {}
         },
         fields: [
           {
-            prop: 'id',
-            label: 'ID',
+            prop: 'index',
+            label: 'Index',
             displayType: TableSpan
           },
           {
-            prop: 'dimension',
-            label: '维度',
+            prop: 'title',
+            label: 'Title',
             displayType: TableSpan,
             editorType: FormInput,
             rules: [new RuleRequire(true), new RuleRange(Range.short)]
           },
           {
-            prop: 'value',
-            label: '数值',
+            prop: 'author',
+            label: 'Author',
             displayType: TableSpan,
             editorType: FormInput,
             rules: [new RuleRequire(true), new RuleRange(Range.short)]
           },
           {
-            prop: 'reorder',
-            label: '权重',
-            displayType: TableSpan,
-            editorType: FormInput,
-            defaultValue: '0',
-            rules: [new RuleRequire(true), new RuleRange(Range.short)]
-          },
-          {
-            prop: 'isUsed',
-            label: '是否显示',
+            prop: 'active',
+            label: 'Active',
             displayType: TableSwitch,
             editorType: FormSwitch,
             defaultValue: '1',
             rules: [new RuleRequire(true), new RuleRange(Range.shortest)]
+          },
+          {
+            prop: 'datetime',
+            label: 'Update date',
+            displayType: TableSpan,
+            editorType: FormInput
           }
         ]
+      }
+    }, // data
+    methods: {
+      search() {
+        let temp = JSON.stringify(this.filterForm)
+        this.filterForm = {}
+        this.filterForm = JSON.parse(temp)
       }
     }
   }

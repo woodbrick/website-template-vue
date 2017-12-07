@@ -96,7 +96,7 @@
     props: ['resourceConfig', 'fields', 'tableName', 'filterForm', 'Editor'],
     data() {
       return {
-        resource: new Resource(this.$resource(this.resourceConfig.url + '{/id}')),
+        resource: new Resource(this.resourceConfig.url),
         rows: [],
         rowsBack: [],
         row: {},
@@ -121,10 +121,10 @@
           .then(res => {
             if (typeof this.resourceConfig.getRows === 'function') {
               this.rows = this.resourceConfig.getRows(res)
-            } else if (this.resourceConfig.resKey.length > 0) {
+            } else if (this.resourceConfig.resKey | 0) {
               this.rows = this.getRows(res)
             } else {
-              this.rows = res.data.rows
+              this.rows = res
             }
             this.rowsBack = this.rows
           })

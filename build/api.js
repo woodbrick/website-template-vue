@@ -9,5 +9,8 @@ module.exports = {
     app.get('/admin', function (req, res) {
       res.redirect('/views/backstage/index.html')
     })
+    app.get('/data/issue', function (req, res) {
+      res.redirect('/static/data-issues.json')
+    })
   }
 }

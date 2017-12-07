@@ -5,6 +5,7 @@
 </template>
 
 <script>
+  import Axios from 'axios'
   export default {
     props: ['field', 'row'],
     data() {
@@ -26,7 +27,7 @@
     },
     methods: {
       getAuthorities() {
-        this.$resource('/thor/manager/role/listPerm/0').get().then(res => {
+        Axios.get('/thor/manager/role/listPerm/0').then(res => {
           this.authorities = res.data.data[0].children
         })
       },

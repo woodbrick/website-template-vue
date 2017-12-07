@@ -12,6 +12,7 @@
 </template>
 
 <script>
+  import Axios from 'axios'
   export default {
     props: ['field', 'row'],
     data() {
@@ -29,7 +30,7 @@
     },
     methods: {
       getDepartmens() {
-        this.$resource('/thor/manage/department').get().then(res => {
+        Axios.get('/thor/manage/department').then(res => {
           this.departmentData = res.data.data
           let options = this.getDepartmensFromParentCode('root')
           options.unshift({ value: 'root', label: '本级' })
