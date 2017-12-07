@@ -1,7 +1,7 @@
 <!-- src/components/Hello.vue -->
 <template>
     <div class="hello">
-        <div class="greeting">Hello {{name}} {{count}}</div>
+        <div class="greeting">Hello {{name}} <span class="number">{{count}}</span></div>
         <button @click="decrement">-</button>
         <button @click="increment">+</button>
     </div>
@@ -13,12 +13,13 @@
   @Component
   export default class Hello extends Vue {
     name: string = 'friend'
-    count: number = 0
+    count: number = 1
     increment() {
       this.count++
     }
     decrement() {
       this.count--
+      this.count = this.count < 1 ? 1 : this.count
     }
   }
 </script>
@@ -33,6 +34,12 @@
     font-size: 20px;
     text-align: center;
     display: inline-block;
+    margin-right: 1rem;
+  }
+  .number {
+    width: 2rem;
+    display: inline-block;
+    text-align: right;
   }
 }
 </style>

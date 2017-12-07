@@ -6,7 +6,7 @@ import Module from './index-modules.vue'
 
 Vue.use(Router)
 
-export default new Router({
+export default new Router(<Router.RouterOptions>{
   routes: [
     {
       path: '/',
