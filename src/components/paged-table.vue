@@ -124,7 +124,7 @@
             } else if (this.resourceConfig.resKey | 0) {
               this.rows = this.getRows(res)
             } else {
-              this.rows = res
+              this.rows = res.rows
             }
             this.rowsBack = this.rows
           })

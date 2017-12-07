@@ -1,3 +1,5 @@
+const fs = require("fs");
+
 module.exports = {
   registerAPI: function (app) {
     app.get('/', function (req, res) {
@@ -10,7 +12,20 @@ module.exports = {
       res.redirect('/views/backstage/index.html')
     })
     app.get('/data/issue', function (req, res) {
-      res.redirect('/static/data-issues.json')
+      let path = './static/data-issues.json'
+      let dataStr = ''
+      let readerStream = fs.createReadStream(path);
+      readerStream.setEncoding('UTF8')
+      readerStream.on('data', function(chunk) {
+        dataStr += chunk
+      })
+      readerStream.on('end', function() {
+        let rows = JSON.parse(dataStr)
+        res.send({
+          rows: rows,
+          total: rows.length
+        })
+      });
     })
   }
 }
