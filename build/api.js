@@ -1,13 +1,13 @@
 module.exports = {
   registerAPI: function (app) {
     app.get('/', function (req, res) {
-      res.redirect('/pages/home/index.html')
+      res.redirect('/views/home/index.html')
     })
     app.get('/login', function (req, res) {
-      res.redirect('/pages/login/index.html')
+      res.redirect('/views/login/index.html')
     })
     app.get('/admin', function (req, res) {
-      res.redirect('/pages/backstage/index.html')
+      res.redirect('/views/backstage/index.html')
     })
   }
 }

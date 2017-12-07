@@ -13,3 +13,11 @@
 - ### login view
     - path = ${host}/login
     - render login view
+
+## 2. standards
+  - ### follow eslint and typescript
+  - ### try to follow material design
+
+## 3. blueprint
+  - ### intergrate server side and web site, generator backstage CRUD page and server CRUD Operation by one model definition
+  - ### add bussiness mapping layer for website/android/ios, used to define relationship between DAO and view
