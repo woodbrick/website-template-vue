@@ -84,131 +84,160 @@
     </template>
   </div>
 </template>
-<script>
+<script lang="ts">
+  // import Vue from 'vue'
+  import { Component, Emit, Inject, Model, Prop, Provide, Vue, Watch } from 'vue-property-decorator'
   import ModelEditor from '../components/model-editor.vue'
   import Resource from '../utils/resource'
   import {fetchData} from '../utils/common'
-  export default {
-    name: 'paged-table',
-    components: {
-      ModelEditor
-    },
-    props: ['resourceConfig', 'fields', 'tableName', 'filterForm', 'Editor'],
-    data() {
-      return {
-        resource: new Resource(this.resourceConfig.url),
-        rows: [],
-        rowsBack: [],
-        row: {},
-        pageSize: this.resourceConfig.pageSize || 5,
-        currentPage: 1,
-        displayEditor: false
-      }
-    },
-    watch: {
-      filterForm(form) {
-        this.rows = this.rowsBack.filter(item =>
+
+
+  interface ResourceConfig {
+    url: string
+    pageSize: number
+    params?: Object
+    getRows?: Function
+    resKey?: string
+    reloadAll?: Function
+    submitParams?: any
+  }
+
+  interface Row {
+    id: number
+    [propName: string]: any
+  }
+
+  export default class PagedTable extends Vue {
+    @Prop()
+    resourceConfig: ResourceConfig
+
+    @Prop()
+    fields: Array<any> = []
+
+    @Prop()
+    tableName: String = ''
+
+    @Prop()
+    filterForm: Object = {}
+
+    @Prop()
+    Editor: Object = {}
+
+    name: string = 'paged-table'
+    ModelEditor = ModelEditor
+    resource: Resource = new Resource(this.resourceConfig.url)
+    rows: Array<Row> = []
+    rowsBack: Array<Row> = []
+    row: Object = {}
+    pageSize: number = this.resourceConfig.pageSize || 5
+    currentPage: number = 1
+    displayEditor: Boolean = false
+    
+    @Watch('filterForm')
+    filterFormChanged(form:any, newValue:Object) {
+      this.rows = this.rowsBack.filter(item =>
           Object.keys(form).every(key => item[key] ? item[key].indexOf(form[key]) > -1 : true))
-        this.changePage(1)
-      }
-    },
+      this.changePage(1)
+    }
+    
     mounted() {
       this.reloadAllData()
-    },
-    methods: {
-      reloadAllData() {
-        this.resource.get(this.resourceConfig.params)
-          .then(res => {
-            if (typeof this.resourceConfig.getRows === 'function') {
-              this.rows = this.resourceConfig.getRows(res)
-            } else if (this.resourceConfig.resKey | 0) {
-              this.rows = this.getRows(res)
-            } else {
-              this.rows = res.rows
-            }
-            this.rowsBack = this.rows
-          })
-      },
-      reloadNewData(formData) {
-        if (formData && formData.id > 0 && !this.resourceConfig.reloadAll) {
-          this.loadSingleData(formData.id)
-          this.displayEditor = false
-        } else {
-          this.reloadAllData()
-          this.displayEditor = false
-        }
-      },
-      paginate(rows) {
-        return rows ? rows.slice(this.pageSize * (this.currentPage - 1), this.pageSize * this.currentPage) : []
-      },
-      changePage(page) {
-        this.currentPage = page
-      },
-      changeOrder({column, prop, order}) {
-        if (!prop || !order) return
-        this.rows.sort((a, b) => {
-          a[prop] = a[prop] === null ? '' : a[prop]
-          b[prop] = b[prop] === null ? '' : b[prop]
-          if (order === 'ascending') {
-            return a[prop].localeCompare(b[prop])
+    }
+
+    reloadAllData() {
+      this.resource.get(this.resourceConfig.params)
+        .then(res => {
+          if (typeof this.resourceConfig.getRows === 'function') {
+            this.rows = this.resourceConfig.getRows(res)
+          } else if (this.resourceConfig.resKey) {
+            this.rows = this.getRows(res)
           } else {
-            return b[prop].localeCompare(a[prop])
+            this.rows = res.rows
+          }
+          this.rowsBack = this.rows
+        })
+    }
+    reloadNewData(formData: any) {
+      if (formData && formData.id > 0 && !this.resourceConfig.reloadAll) {
+        this.loadSingleData(formData.id)
+        this.displayEditor = false
+      } else {
+        this.reloadAllData()
+        this.displayEditor = false
+      }
+    }
+    paginate(rows: Array<Object>) {
+      return rows ? rows.slice(this.pageSize * (this.currentPage - 1), this.pageSize * this.currentPage) : []
+    }
+    changePage(page: number) {
+      this.currentPage = page
+    }
+    changeOrder(param: any) {
+      let prop = param.prop
+      let order = param.order
+      if (!prop || !order) return
+      this.rows.sort((a, b) => {
+        a[prop] = a[prop] === null ? '' : a[prop]
+        b[prop] = b[prop] === null ? '' : b[prop]
+        if (order === 'ascending') {
+          return a[prop].localeCompare(b[prop])
+        } else {
+          return b[prop].localeCompare(a[prop])
+        }
+      })
+    }
+    handleEdit(index: number, data: Row) {
+      this.row = data.id ? data : {}
+      this.displayEditor = true
+    }
+    handleDelete(index: number, data: Row) {
+      if (!data.id) return
+      this.resource.delete(data.id)
+        .then(res => {
+          this.rows.forEach((row, index) => {
+            if (row.id === data.id) {
+              this.rows.splice(index, 1)
+            }
+          })
+        })
+        .catch(dismiss => {
+          console.warn(dismiss)
+        })
+    }
+    submitProp(index: number, row: Row, key: string, value: any) {
+      row[key] = value
+      let formData = Object.assign(
+        fetchData(this.fields.filter(field => !field.readonly), row),
+        this.resourceConfig.submitParams)
+      this.resource.update(formData)
+        .then(res => {
+          if (!this.resourceConfig.reloadAll) {
+            this.loadSingleData(row.id)
+          } else {
+            this.reloadAllData()
           }
         })
-      },
-      handleEdit(index, data) {
-        this.row = data.id ? data : {}
-        this.displayEditor = true
-      },
-      handleDelete(index, data) {
-        if (!data.id) return
-        this.resource.delete(data.id)
-          .then(res => {
-            this.rows.forEach((row, index) => {
-              if (row.id === data.id) {
-                this.rows.splice(index, 1)
-              }
-            })
-          })
-          .catch(dismiss => {
-            console.warn(dismiss)
-          })
-      },
-      submitProp(index, row, key, value) {
-        row[key] = value
-        let formData = Object.assign(
-          fetchData(this.fields.filter(field => !field.readonly), row),
-          this.resourceConfig.submitParams)
-        this.resource.update(formData)
-          .then(res => {
-            if (!this.resourceConfig.reloadAll) {
-              this.loadSingleData(row.id)
-            } else {
-              this.reloadAllData()
-            }
-          })
-          .catch(dismiss => {
-            console.warn(dismiss)
-            this.loadSingleData(row.id)
-          })
-      },
-      loadSingleData(id) {
-        this.resource.get({id: id}).then(res => {
-          let rowData = res.data
-          if (!rowData || !rowData.id) return
-          this.rows.every((item, index) => {
-            if (item.id === rowData.id) {
-              this.rows.splice(index, 1, rowData)
-              return false
-            } else {
-              return true
-            }
-          })
+        .catch(dismiss => {
+          console.warn(dismiss)
+          this.loadSingleData(row.id)
         })
-      },
-      getRows(res) {
-        return res.data[this.resourceConfig.resKey]
-      }
+    }
+    loadSingleData(id: number) {
+      this.resource.get({id: id}).then(res => {
+        let rowData = res.data
+        if (!rowData || !rowData.id) return
+        this.rows.every((item, index) => {
+          if (item.id === rowData.id) {
+            this.rows.splice(index, 1, rowData)
+            return false
+          } else {
+            return true
+          }
+        })
+      })
+    }
+    getRows(res: any) {
+      return this.resourceConfig.resKey ? res.data[this.resourceConfig.resKey] : ''
     }
   }
 </script>

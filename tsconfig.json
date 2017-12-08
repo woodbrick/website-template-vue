@@ -9,7 +9,7 @@
     ],
     "moduleResolution": "node",
     "isolatedModules": false,
-    "target": "es5",
+    "target": "es6",
     "allowSyntheticDefaultImports": true,
     "experimentalDecorators": true
   },
