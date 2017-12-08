@@ -172,9 +172,7 @@
     changePage(page: number) {
       this.currentPage = page
     }
-    changeOrder(param: any) {
-      let prop = param.prop
-      let order = param.order
+    changeOrder({string: prop = '', string: order = ''}) {
       if (!prop || !order) return
       this.rows.sort((a, b) => {
         a[prop] = a[prop] === null ? '' : a[prop]
