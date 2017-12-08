@@ -1,17 +1,13 @@
 {
   "compilerOptions": {
     "strict": true,
-    "module": "es2015",
-    "lib": [
-      "dom",
-      "es5",
-      "es2015.promise"
-    ],
+    "module": "commonjs",
     "moduleResolution": "node",
     "isolatedModules": false,
     "target": "es6",
     "allowSyntheticDefaultImports": true,
-    "experimentalDecorators": true
+    "experimentalDecorators": true,
+    "sourceMap": true
   },
   "include": [
     "./src/**/*.ts"
