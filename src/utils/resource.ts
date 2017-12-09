@@ -29,7 +29,7 @@ function doGet(url: string, param?: Object) {
   return new Promise((resolve, reject) => {
     Axios.get(url, {params: param})
       .then(response => {
-        let data = JSON.parse(response.data)
+        let data = response.data
         if (data) {
           storage.set(url, param, data)
           let cachedRes = storage.get(url, param)
@@ -57,7 +57,7 @@ function doPost(url: string, data?: any) {
   return new Promise((resolve, reject) => {
     Axios.post(url, data)
       .then(response => {
-        let json = JSON.parse(response.data)
+        let json = response.data
         if (json) {
           resolve(json)
         } else {
@@ -75,7 +75,7 @@ class Resource {
   doOperation(request: Function) {
     return new Promise((resolve, reject) => {
       request().then((response: AxiosResponse) => {
-        let json = JSON.parse(response.data)
+        let json = response.data
         if (json) {
           resolve(json)
         } else {

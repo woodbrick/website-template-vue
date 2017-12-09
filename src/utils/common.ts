@@ -1,6 +1,11 @@
 class FormArray extends Array {
   constructor() {
     super()
+    // this = [...arguments]
+    Array.prototype.forEach.call(arguments, (element: number) => {
+      this.push(element)
+    });
+    console.log(arguments, this)
   }
   /**
    * @param {function(Object=obj, Object=item, number=index)} fun
@@ -105,7 +110,8 @@ class FormArray extends Array {
   }
 }
 
-
+let arr = FormArray.fromArray([1,2,3])
+console.log(arr)
 
 
 /**

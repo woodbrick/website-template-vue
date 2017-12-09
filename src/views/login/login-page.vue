@@ -63,7 +63,7 @@
   <div class="login-page">
     <div class="login-container">
       <div class="login-right">
-        <h2>登录嘉兴账号</h2>
+        <h2>Login</h2>
         <div class="login-content">
           <el-form :model="formData" :rules="rules" ref="formData" class="form-login">
             <el-form-item prop="username">

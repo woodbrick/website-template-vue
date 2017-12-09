@@ -87,6 +87,7 @@
 <script>
   import ModelEditor from '../components/model-editor.vue'
   import {fetchData} from '../utils/common'
+  import Resource from '../utils/resource'
   export default {
     name: 'paged-table',
     components: {

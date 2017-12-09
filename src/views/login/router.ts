@@ -4,7 +4,7 @@ import LoginPage from './login-page.vue'
 
 Vue.use(Router)
 
-export default new Router({
+export default new Router(<Router.RouterOptions>{
   routes: [
     {
       path: '/',

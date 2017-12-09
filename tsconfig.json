@@ -1,13 +1,17 @@
 {
   "compilerOptions": {
     "strict": true,
-    "module": "commonjs",
+    "module": "es2015",
     "moduleResolution": "node",
     "isolatedModules": false,
-    "target": "es5",
+    "target": "es2017",
     "allowSyntheticDefaultImports": true,
     "experimentalDecorators": true,
-    "sourceMap": true
+    "sourceMap": true,
+    "lib": [
+      "es2017",
+      "dom"
+    ]
   },
   "include": [
     "./src/**/*.ts"
