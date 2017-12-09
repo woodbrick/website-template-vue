@@ -62,8 +62,9 @@ app.use(hotMiddleware)
 // serve pure static assets
 // var staticPath = path.posix.join(config.dev.assetsPublicPath, config.dev.assetsSubDirectory)
 // app.use(staticPath, Koa.static('./static'))
-const serve = require('koa-static');
-app.use(serve('./static'))
+const serve = require('koa-static2');
+var staticPath = __dirname.replace('build', 'static')
+app.use(serve('static', staticPath))
 
 var uri = 'http://localhost:' + port
 
