@@ -4,7 +4,7 @@
     "module": "commonjs",
     "moduleResolution": "node",
     "isolatedModules": false,
-    "target": "es6",
+    "target": "es5",
     "allowSyntheticDefaultImports": true,
     "experimentalDecorators": true,
     "sourceMap": true

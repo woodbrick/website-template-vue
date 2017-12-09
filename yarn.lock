@@ -4033,10 +4033,6 @@ reduce-function-call@^1.0.1:
   dependencies:
     balanced-match "^0.4.2"
 
-reflect-metadata@^0.1.10:
-  version "0.1.10"
-  resolved "http://registry.npm.taobao.org/reflect-metadata/download/reflect-metadata-0.1.10.tgz#b4f83704416acad89988c9b15635d47e03b9344a"
-
 regenerate@^1.2.1:
   version "1.3.3"
   resolved "http://registry.npm.taobao.org/regenerate/download/regenerate-1.3.3.tgz#0c336d3980553d755c39b586ae3b20aa49c82b7f"
@@ -4789,7 +4785,7 @@ vue-awesome-swiper@^2.6.7:
   dependencies:
     swiper "^3.4.2"
 
-vue-class-component@^6.0.0, vue-class-component@^6.1.1:
+vue-class-component@^6.1.1:
   version "6.1.1"
   resolved "http://registry.npm.taobao.org/vue-class-component/download/vue-class-component-6.1.1.tgz#2e095036648b428a4f1e9ec8a8bbe7833a6d1879"
 
@@ -4814,13 +4810,6 @@ vue-loader@^12.1.0:
     vue-hot-reload-api "^2.1.0"
     vue-style-loader "^3.0.0"
     vue-template-es2015-compiler "^1.2.2"
-
-vue-property-decorator@^6.0.0:
-  version "6.0.0"
-  resolved "http://registry.npm.taobao.org/vue-property-decorator/download/vue-property-decorator-6.0.0.tgz#bb651b293542e31db0d24f36f4b0250ef08d8515"
-  dependencies:
-    reflect-metadata "^0.1.10"
-    vue-class-component "^6.0.0"
 
 vue-resource@^1.3.4:
   version "1.3.4"
