@@ -18,13 +18,13 @@ let readyPromise = new Promise(resolve => {
 console.log('> Starting prod server...')
 
 app.get('/',  function(req, res) {
-  res.sendFile(path.join(config.build.assetsRoot, 'pages/home/index.html'));
+  res.sendFile(path.join(config.build.assetsRoot, 'views/home/index.html'));
 });
 app.get('/admin',  function(req, res) {
-  res.sendFile(path.join(config.build.assetsRoot, 'pages/backstage/index.html'));
+  res.sendFile(path.join(config.build.assetsRoot, 'views/backstage/index.html'));
 });
 app.get('/login',  function(req, res) {
-  res.sendFile(path.join(config.build.assetsRoot, 'pages/login/index.html'));
+  res.sendFile(path.join(config.build.assetsRoot, 'views/login/index.html'));
 });
 
 // default port where dev server listens for incoming traffic

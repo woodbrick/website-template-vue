@@ -1,31 +1,31 @@
 const fs = require("fs");
+const Router = require('koa-router')
+let page = new Router()
+page
+.get('/404', async ( ctx )=>{
+  ctx.body = '404 page!'
+})
+
+let data = new Router()
+data
+.get('/issue', async ctx => {
+  let path = './static/data-issues.json'
+  var data = fs.readFileSync(path);
+  ctx.body = {
+    rows: JSON.parse(data),
+    success: true
+  }
+})
+
+let router = new Router()
+router.use('/data', data.routes(), data.allowedMethods())
+.use('/views', page.routes(), page.allowedMethods())
+.redirect('/', '/views/home/index.html')
+.redirect('/backstage', '/views/backstage/index.html')
+.redirect('/login', '/views/login/index.html')
 
 module.exports = {
   registerAPI: function (app) {
-    app.get('/', function (req, res) {
-      res.redirect('/views/home/index.html')
-    })
-    app.get('/login', function (req, res) {
-      res.redirect('/views/login/index.html')
-    })
-    app.get('/admin', function (req, res) {
-      res.redirect('/views/backstage/index.html')
-    })
-    app.get('/data/issue', function (req, res) {
-      let path = './static/data-issues.json'
-      let dataStr = ''
-      let readerStream = fs.createReadStream(path);
-      readerStream.setEncoding('UTF8')
-      readerStream.on('data', function(chunk) {
-        dataStr += chunk
-      })
-      readerStream.on('end', function() {
-        let rows = JSON.parse(dataStr)
-        res.send({
-          rows: rows,
-          total: rows.length
-        })
-      });
-    })
+    app.use(router.routes()).use(router.allowedMethods())
   }
 }

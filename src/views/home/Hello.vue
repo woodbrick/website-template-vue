@@ -26,7 +26,7 @@ export default class Hello extends Vue {
     },
     {
       name: 'backstage',
-      link: '/admin'
+      link: '/backstage'
     },
     {
       name: 'login',

@@ -8,7 +8,7 @@ let runTimeConfig = require('../config.dev')
 
 var opn = require('opn')
 var path = require('path')
-var express = require('express')
+var Koa = require('koa')
 var webpack = require('webpack')
 var proxyMiddleware = require('http-proxy-middleware')
 var webpackConfig = require('./webpack.dev.conf')
@@ -23,15 +23,15 @@ var autoOpenBrowser = !!config.dev.autoOpenBrowser
 // https://github.com/chimurai/http-proxy-middleware
 var proxyTable = runTimeConfig.proxyTable
 
-var app = express()
+var app = new Koa()
 var compiler = webpack(webpackConfig)
 
-var devMiddleware = require('webpack-dev-middleware')(compiler, {
+var devMiddleware = require('koa-webpack-dev-middleware')(compiler, {
   publicPath: webpackConfig.output.publicPath,
   quiet: true
 })
 
-var hotMiddleware = require('webpack-hot-middleware')(compiler, {
+var hotMiddleware = require('koa-webpack-hot-middleware')(compiler, {
   log: false,
   heartbeat: 2000
 })
@@ -43,14 +43,14 @@ compiler.plugin('compilation', function (compilation) {
   })
 })
 
-// proxy api requests
-Object.keys(proxyTable).forEach(function (context) {
-  var options = proxyTable[context]
-  if (typeof options === 'string') {
-    options = { target: options }
-  }
-  app.use(proxyMiddleware(options.filter || context, options))
-})
+// // proxy api requests
+// Object.keys(proxyTable).forEach(function (context) {
+//   var options = proxyTable[context]
+//   if (typeof options === 'string') {
+//     options = { target: options }
+//   }
+//   app.use(proxyMiddleware(options.filter || context, options))
+// })
 
 // serve webpack bundle output
 app.use(devMiddleware)
@@ -60,8 +60,10 @@ app.use(devMiddleware)
 app.use(hotMiddleware)
 
 // serve pure static assets
-var staticPath = path.posix.join(config.dev.assetsPublicPath, config.dev.assetsSubDirectory)
-app.use(staticPath, express.static('./static'))
+// var staticPath = path.posix.join(config.dev.assetsPublicPath, config.dev.assetsSubDirectory)
+// app.use(staticPath, Koa.static('./static'))
+const serve = require('koa-static');
+app.use(serve('./static'))
 
 var uri = 'http://localhost:' + port
 
