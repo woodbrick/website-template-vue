@@ -4,21 +4,30 @@
     margin-right: 2px;
   }
   .el-tree {
-    padding: .8rem 0;
+    padding: 0;
     margin-top: 1rem;
     margin-bottom: 6rem;
+    border: none;
   }
   .tree-operation {
     float: right;
     width: 240px;
     margin-top: -2px;
   }
-  .el-tree-node__expand-icon {
-    margin-top: -8px;
-  }
   .el-tree-node__content {
     height: 30px;
     line-height: 30px;
+    border-bottom: 1px solid rgb(225, 225, 225);
+    display: flex;
+    justify-content: space-between;
+    padding-top: 4px;
+    padding-bottom: 4px;
+    .el-tree-node__expand-icon {
+      align-self: center;
+      &.expanded {
+        transform: rotate(45deg);
+      }
+    }
   }
   .el-tree-node {
     white-space: normal;
@@ -32,17 +41,27 @@
   }
   .row {
     font-size: 16px;
+    flex: 1;
+    display: flex;
+    .data {
+      flex: 1;
+    }
   }
 }
 </style>
 <template>
   <div class="node-tree">
     <el-input
+      v-if="searchable"
       placeholder="输入关键字进行过滤"
       v-model="filterText"
       icon="search">
     </el-input>
-    <el-button class="tree-toggle" type="primary" @click="toggleAllNode">
+    <el-button
+      v-if="searchable"
+      class="tree-toggle"
+      type="primary"
+      @click="toggleAllNode">
       {{isExplanded ? '收起所有' : '展开所有'}}
     </el-button>
     <el-tree
@@ -63,10 +82,12 @@ export default {
   props: {
     nodeKey: String,
     treeData: Array,
+    searchable: Boolean,
     add: Function,
     edit: Function,
     delete: Function,
-    renderRow: Function
+    renderRow: Function,
+    renderOperation: Function
   },
   data() {
     return {
@@ -89,37 +110,41 @@ export default {
     },
     renderContent(h, { node, data, store }) {
       return (
-        <span>
-          <span class="row">
+        <span class="row">
+          <span class="data">
             {typeof this.renderRow === 'function' ? this.renderRow(data) : data.name}
           </span>
           <span class='tree-operation'>
-            {this.canAdd
-              ? <el-button
-                size="small"
-                type="success"
-                icon="plus"
-                on-click={ (evt) => this.addRow(store, data, evt) }
-                >添加</el-button>
-              : ''
-            }
-            {this.canEdit
-              ? <el-button
-                size="small"
-                type="primary"
-                icon="edit"
-                on-click={ (evt) => this.editRow(store, data, evt) }
-                >编辑</el-button>
-              : ''
-            }
-            {this.canDelete
-              ? <el-button
-                size="small"
-                type="danger"
-                icon="delete"
-                on-click={ (evt) => this.deleteRow(store, data, evt) }
-                >删除</el-button>
-              : ''
+            {typeof this.renderOperation === 'function' ? this.renderOperation(store, data)
+              : <div>
+                {this.canAdd && !data.disableAdd
+                  ? <el-button
+                    size="small"
+                    type="success"
+                    icon="plus"
+                    on-click={ (evt) => this.addRow(data, evt) }
+                    >添加</el-button>
+                  : ''
+                }
+                {this.canEdit && !data.disableEdit
+                  ? <el-button
+                    size="small"
+                    type="primary"
+                    icon="edit"
+                    on-click={ (evt) => this.editRow(data, evt) }
+                    >编辑</el-button>
+                  : ''
+                }
+                {this.canDelete && !data.disableDelete
+                  ? <el-button
+                    size="small"
+                    type="danger"
+                    icon="delete"
+                    on-click={ (evt) => this.deleteRow(data, evt) }
+                    >删除</el-button>
+                  : ''
+                }
+              </div>
             }
           </span>
         </span>
@@ -152,3 +177,5 @@ export default {
   } // methods
 }
 </script>
+
+
